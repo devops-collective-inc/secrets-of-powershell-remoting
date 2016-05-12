@@ -6,5 +6,3 @@ diagnostics-and-troubleshooting.md
 session-management.md
 powershell-remoting-and-security.md
 configuring-remoting-via-gpo.md
-afterword.md
-holding-page-for-images.md
