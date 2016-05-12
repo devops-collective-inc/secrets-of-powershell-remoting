@@ -145,9 +145,9 @@ As shown in figure 2.15, run the following command:
 
 Figure 2.15: Setting up the HTTPS WinRM listener
 
-````
+```
 Winrm create winrm/config/Listener?Address=\*+Transport=HTTPS @{Hostname="xxx";CertificateThumbprint="yyy"}
-````
+```
 
 There are two or three pieces of information you'll need to place into this command:
 
@@ -161,10 +161,10 @@ That's all you should need to do in order to get the listener working.
 
 You can also run an equivalent PowerShell command to accomplish this task:
 
-````
+```
 New-WSManInstance winrm/config/Listener -SelectorSet @{Address='\*';
 Transport='HTTPS'} -ValueSet @{HostName='xxx';CertificateThumbprint='yyy'}
-````
+```
 
 In that example, "xxx" and "yyy" get replaced just as they did in the previous example.
 
@@ -172,9 +172,9 @@ In that example, "xxx" and "yyy" get replaced just as they did in the previous e
 
 I tested this from the standalone C3925954503 computer, attempting to reach the DCA domain controller in COMPANY.loc. I configured C3925954503 with a HOSTS file, so that it could resolve the hostname DCA to the correct IP address without needing DNS. I was sure to run:
 
-````
+```
 Ipconfig /flushdns
-````
+```
 
 This ensured that the HOSTS file was read into the DNS name cache. The results are in figure 2.16. Note that I can't access DCA by using its IP address directly, because the SSL certificate doesn't contain an IP address. The SSL certificate was issued to "dca," so we need to be able to access the computer by typing "dca" as the computer name. Using the HOSTS file will let Windows resolve that to an IP address.
 
@@ -186,21 +186,21 @@ Figure 2.16: Testing the HTTPS listener
 
 We started with this:
 
-````
+```
 Enter-PSSession -computerName DCA
-````
+```
 
 It didn't work - which I expected. Then we tried this:
 
-````
+```
 Enter-PSSession -computerName DCA -credential COMPANY\Administrator
-````
+```
 
 We provided a valid password for the Administrator account, but as expected the command didn't work. Finally:
 
-````
+```
 Enter-PSSession -computerName DCA -credential COMPANY\Administrator -UseSSL
-````
+```
 
 Again providing a valid password, we were rewarded with the remote prompt we expected. It worked! This fulfills the two conditions we specified earlier: We're using an HTTPS-secured connection _and_ providing a credential. Both conditions are required because the computer isn't in my domain (since in this case the source computer isn't even in a domain). As a refresher, figure 2.17 shows, in green, the connection we created and used.
 
@@ -219,11 +219,11 @@ Using either or both of these options will still enable SSL encryption on the co
 
 To create and use a session object that includes both of these parameters:
 
-````
+```
 $option = New-PSSessionOption -SkipCACheck -SkipCNCheck
 Enter-PSSession -computerName DCA -sessionOption $option
         -credential COMPANY\Administrator -useSSL
-````
+```
 
 **Caution:** Yes, this is an easy way to make annoying error messages go away. But those errors are trying to warn you of a potential problem and protect you from potential security risks that are very real, and which are very much in use by modern attackers.
 
@@ -259,9 +259,9 @@ Before closing the Certificates console, right-click on the new certificate, and
 
 On the remote computer, run the PowerShell console as Administrator, and enter the following command to enable Certificate authentication:
 
-````
+```
 Set-Item -Path WSMan:\localhost\Service\Auth\Certificate -Value $true
-````
+```
 
 #### Importing the client's certificate on the remote computer
 
@@ -297,10 +297,10 @@ Figure 2.22: Placing the certificate into the Trusted People store.
 
 Open a PowerShell console as Administrator on the remote computer. For this next step, you will require the Certificate Thumbprint of the CA that issued the client's certificate. You should be able to find this by issuing one of the following two commands (depending on whether the CA's certificate is located in the "Trusted Root Certification Authorities" or the "Intermediate Certification Authorities" store):
 
-````
+```
 Get-ChildItem -Path cert:\LocalMachine\Root  
 Get-ChildItem -Path cert:\LocalMachine\CA
-````
+```
 
 ![image030.png](images/image030.png)
 
@@ -308,9 +308,9 @@ Figure 2.23: Obtaining the CA certificate thumbprint.
 
 Once you have the thumbprint, issue the following command to create the certificate mapping:
 
-````
+```
 New-Item -Path WSMan:\localhost\ClientCertificate -Credential (Get-Credential) -Subject <userPrincipalName> -URI \* -Issuer <CA Thumbprint> -Force
-````
+```
 
 When prompted for credentials, enter the username and password of a local account with Administrator rights.
 
@@ -324,9 +324,9 @@ Figure 2.24: Setting up the client certificate mapping.
 
 Now, you should be all set to authenticate to the remote computer using your certificate. For this step, you will need the thumbprint of the client authentication certificate. To obtain this, you can run the following command on the client computer:
 
-````
+```
 Get-ChildItem -Path Cert:\CurrentUser\My
-````
+```
 
 Once you have this thumbprint, you can authenticate to the remote computer by using either the Invoke-Command or New-PSSession cmdlets with the -CertificateThumbprint parameter, as shown in figure 2.25.
 
@@ -402,11 +402,11 @@ There's a quirk in Windows that tends to strip the Administrator account token f
 
 To do so, run this on the target computer (type this all in one line and then hit Enter):
 
-````
+```
 New-ItemProperty -Name LocalAccountTokenFilterPolicy
 -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\
 Policies\System -PropertyType Dword -Value 1
-````
+```
 
 That should fix the problem. Note that this does disable User Account Control (UAC) on the machine where you ran it, so make sure that's okay with you before doing so.
 
@@ -420,15 +420,15 @@ The following configuration changes are needed to enable the second hop:
 
 - CredSSP must be enabled on your originating computer and the intermediate server you connect to. In PowerShell, on your originating computer, run:
 
-````
+```
 Set-Item WSMAN:\localhost\client\auth\credssp -value $true
-````
+```
 
 - On your intermediate server(s), you make a similar change to the above, but in a different section of the configuration:
 
-````
+```
 Set-Item WSMAN:\localhost\service\auth\credssp -value $true
-````
+```
 
 - Your domain policy must permit delegation of fresh credentials. In a Group Policy object (GPO), this is found in Computer Configuration > Policies > Administrative Templates > System > Credential Delegation > Allow Delegation of Fresh Credentials. You must provide the names of the machines to which credentials may be delegated, or specify a wildcard like "\*.ad2008r2.loc" to allow an entire domain. Be sure to allow time for the updated GPO to apply, or run Gpupdate on the originating computer (or reboot it).
 
@@ -444,15 +444,15 @@ Figure 2.34: The connections for the second-hop test
 
 Seem tedious and time-consuming to make all of those changes? There's a faster way. On the originating computer, run this:
 
-````
+```
 Enable-WSManCredSSP -Role Client -Delegate name
-````
+```
 
 Where "name" is the name of the computers that you plan to remote to next. This can be a wildcard, like \*, or a partial wildcard, like \*.AD2008R2.loc. Then, on the intermediate computer (the one to which you will delegate your credentials), run this:
 
-````
+```
 Enable-WSManCredSSP -Role Server
-````
+```
 
 Between them, these two commands will accomplish almost all of the configuration points we listed earlier. The only exception is that they will modify your local policy to permit fresh credential delegation, rather than modifying domain policy via a GPO. You can choose to modify the domain policy yourself, using the GPMC, to make that particular setting more universal.
 
