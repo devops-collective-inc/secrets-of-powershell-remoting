@@ -9,4 +9,3 @@
 * [Session Management](manuscript/session-management.md)
 * [PowerShell Remoting and Security](manuscript/powershell-remoting-and-security.md)
 * [Configuring Remoting via GPO](manuscript/configuring-remoting-via-gpo.md)
-* [Afterword](manuscript/afterword.md)
