@@ -146,7 +146,7 @@ As shown in figure 2.15, run the following command:
 Figure 2.15: Setting up the HTTPS WinRM listener
 
 ```
-Winrm create winrm/config/Listener?Address=\*+Transport=HTTPS @{Hostname="xxx";CertificateThumbprint="yyy"}
+Winrm create winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname="xxx";CertificateThumbprint="yyy"}
 ```
 
 There are two or three pieces of information you'll need to place into this command:
@@ -162,7 +162,7 @@ That's all you should need to do in order to get the listener working.
 You can also run an equivalent PowerShell command to accomplish this task:
 
 ```
-New-WSManInstance winrm/config/Listener -SelectorSet @{Address='\*';
+New-WSManInstance winrm/config/Listener -SelectorSet @{Address='*';
 Transport='HTTPS'} -ValueSet @{HostName='xxx';CertificateThumbprint='yyy'}
 ```
 
@@ -309,7 +309,7 @@ Figure 2.23: Obtaining the CA certificate thumbprint.
 Once you have the thumbprint, issue the following command to create the certificate mapping:
 
 ```
-New-Item -Path WSMan:\localhost\ClientCertificate -Credential (Get-Credential) -Subject <userPrincipalName> -URI \* -Issuer <CA Thumbprint> -Force
+New-Item -Path WSMan:\localhost\ClientCertificate -Credential (Get-Credential) -Subject <userPrincipalName> -URI * -Issuer <CA Thumbprint> -Force
 ```
 
 When prompted for credentials, enter the username and password of a local account with Administrator rights.
