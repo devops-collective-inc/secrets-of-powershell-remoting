@@ -1,0 +1,8 @@
+About.md
+remoting-basics.md
+accessing-remote-computers.md
+working-with-endpoints-aka-session-configurations.md
+diagnostics-and-troubleshooting.md
+session-management.md
+powershell-remoting-and-security.md
+configuring-remoting-via-gpo.md
