@@ -173,12 +173,14 @@ The results you receive from a remote computer have been serialized into XML, an
 If you need to access methods or change properties, or in other words if you must work with the live objects, simply make sure you do so on the remote side, before the objects get serialized and travel back to the caller. This example uses object methods on the remote side to determine process owners which works just fine:
 
 ```
-PS> Invoke-Command -ComputerName CLIENT1 -scriptBlock { Get-WmiObject -Class Win32_Process | Select-Object Name, { $_.GetOwner().User } }
+PS> Invoke-Command -ComputerName CLIENT1 -scriptBlock `
+{ Get-WmiObject -Class Win32_Process | Select-Object Name, { $_.GetOwner().User } }
 ```
 Once the results travel back to you, you can no longer invoke object methods because now you work with "rehydrated" objects that are detached from the live objects and do not contain any methods anymore:
 
 ```
-PS> Invoke-Command -ComputerName CLIENT1 -scriptBlock { Get-WmiObject -Class Win32_Process } | Select-Object Name, { $_.GetOwner().User }
+PS> Invoke-Command -ComputerName CLIENT1 -scriptBlock `
+{ Get-WmiObject -Class Win32_Process } | Select-Object Name, { $_.GetOwner().User }
 ```
 Serializing and deserializing is relatively expensive. You can optimize speed and resources by making sure that your remote code emits only the data you really need. You could for example use Select-Object and carefully pick the properties you want back rather than serializing and deserializing everything.
 
