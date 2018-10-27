@@ -129,7 +129,7 @@ Figure 2.13: Double-click the certificate, or right-click and select Open
 
 Finally, as shown in figure 2.14, select the certificate's thumbprint. You'll need to either write this down, or copy it to your Clipboard. This is how WinRM will identify the certificate you want to use.
 
-**Note:** It's possible to list your certificate in PowerShell's CERT: drive, which will make the thumbprint a bit easier to copy to the Clipboard. In PowerShell, run Dir CERT:\LocalMachine\My and read carefully to make sure you select the right certificate. If the entire thumbprint isn't displayed, run Dir CERT:\LocalMachine\My \| FL \* instead.
+**Note:** It's possible to list your certificate in PowerShell's CERT: drive, which will make the thumbprint a bit easier to copy to the Clipboard. In PowerShell, run Dir CERT:\LocalMachine\My and read carefully to make sure you select the right certificate. If the entire thumbprint isn't displayed, run Dir CERT:\My | FL \* instead.
 
 ![image021.png](images/image021.png)
 
