@@ -2,7 +2,6 @@
 Principle author: Don Jones
 Contributing author: Dr. Tobias Weltner
 With contributions by Dave Wyatt and Aleksandar Nikolik
-Cover design by Nathan Vonnahme
 
 ---
 
